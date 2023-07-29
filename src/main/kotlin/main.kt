@@ -115,7 +115,11 @@ object ChatService {
 
     fun getChatMessages(userId: Int, startFrom: Int, count: Int): List<Message> {
         val chat = chats[userId] ?: throw NoSuchChatsFound()
-        return chat.messages.filter { !it.deleted && it.messageId >= startFrom }.take(count).onEach { it.read = true }
+        return chat.messages.filter { !it.deleted && it.messageId >= startFrom }
+            .asSequence()
+            .take(count)
+            .onEach { it.read = true }
+            .toList()
     }
 
     fun printChats() = println(chats)
