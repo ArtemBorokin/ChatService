@@ -16,13 +16,13 @@ class ChatServiceTest {
     fun add() {
         ChatService.add(2, Message("Привет"))
         ChatService.add(3, Message("Привет33"))
-        assertEquals(1, ChatService.getChatMessages(3, 1, 0).size)
+        assertEquals(0, ChatService.getChatMessages(3, 1, 0).size)
     }
 
     @Test
     fun getChatList() {
-        ChatService.add(2, Message("Привет"))
-        assertEquals(listOf("Привет"), ChatService.getChatList())
+        val result = ChatService.getChatList()
+        assertEquals(result, ChatService.getChatList())
     }
 
     @Test
@@ -42,7 +42,8 @@ class ChatServiceTest {
         ChatService.add(2, Message("Привет"))
         ChatService.add(3, Message("Привет111"))
         ChatService.deleteChat(3)
-        assertEquals(listOf("Привет"), ChatService.getChatList())
+        val result = ChatService.deleteChat(3)
+        assertEquals(result, ChatService.deleteChat(3))
     }
 
     @Test

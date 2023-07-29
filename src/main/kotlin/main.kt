@@ -74,11 +74,11 @@ data class Message(
     val messageId: Int = CorrectId.getNewId(0)
 )
 
-class NoSuchChatsFound: Exception()
+class NoSuchChatsFound : Exception()
 
-class MessagesNotFoundError: Exception()
+class MessagesNotFoundError : Exception()
 
-object ChatService{
+object ChatService {
     private var chats = mutableMapOf<Int, Chat>()
 
     fun clear() {
@@ -91,12 +91,12 @@ object ChatService{
     }
 
     fun getChatList() =
-        chats.values.map { it.messages.lastOrNull { message ->  !message.deleted}?.text ?: "Нет сообщений" }
+        //chats.values.map { it.messages.lastOrNull { message ->  !message.deleted}?.text ?: "Нет сообщений" }
+        chats.values.toList()
 
     fun restoreMessage(userId: Int, messageId: Int): Boolean {
         val chat = chats[userId] ?: throw NoSuchChatsFound()
         return chat.messages.filter { it.messageId == messageId }.onEach { it.deleted = false }.size == 1
-
     }
 
     fun deleteMessage(userId: Int, messageId: Int): Boolean {
@@ -112,9 +112,9 @@ object ChatService{
         return chats.map { it.value.messages.filter { !it.read } }.filter { it.isNotEmpty() }.size
     }
 
-    fun getChatMessages(userId: Int, count: Int, startFrom: Int): List<Message> {
+    fun getChatMessages(userId: Int, startFrom: Int, count: Int): List<Message> {
         val chat = chats[userId] ?: throw NoSuchChatsFound()
-        return chat.messages.filter { !it.deleted  }.asSequence().drop(startFrom).take(count).ifEmpty { throw MessagesNotFoundError() }.onEach { it.read = true }.toList()
+        return chat.messages.filter { it.messageId >= startFrom }.take(count).onEach { it.read = true }.toList()
     }
 
     fun printChats() = println(chats)
