@@ -91,8 +91,9 @@ object ChatService {
     }
 
     fun getChatList() =
-        //chats.values.map { it.messages.lastOrNull { message ->  !message.deleted}?.text ?: "Нет сообщений" }
         chats.values.toList()
+    fun getLastMessages() =
+        chats.values.map { it.messages.lastOrNull { message ->  !message.deleted}?.text ?: "Нет сообщений" }
 
     fun restoreMessage(userId: Int, messageId: Int): Boolean {
         val chat = chats[userId] ?: throw NoSuchChatsFound()
@@ -114,7 +115,7 @@ object ChatService {
 
     fun getChatMessages(userId: Int, startFrom: Int, count: Int): List<Message> {
         val chat = chats[userId] ?: throw NoSuchChatsFound()
-        return chat.messages.filter { it.messageId >= startFrom }.take(count).onEach { it.read = true }.toList()
+        return chat.messages.filter { !it.deleted && it.messageId >= startFrom }.take(count).onEach { it.read = true }
     }
 
     fun printChats() = println(chats)
